@@ -154,9 +154,9 @@ void updateVal(TreeNode* node, int newValue, int oldValue) {
 }
 
 class AVL {
+    public:
     TreeNode * root;
 
-    public:
         AVL(int val) {
             this -> root = new TreeNode(val);
         }
@@ -176,6 +176,3 @@ class AVL {
     }
 };
         
-int main(){
-    return 0;
-}

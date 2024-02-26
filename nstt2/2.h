@@ -1,8 +1,5 @@
-#include <exception>
 #include <iostream>
-#include <memory>
 #include <stdio.h>
-
 using namespace std;
 class Point
 {
@@ -49,7 +46,7 @@ public:
 
     Point get_intersection(Line line) {
         if (this->A == line.get_A()) {
-            cout << "Lines are paralell";
+            cout << "Lines are paralell" << endl;
         } 
         else
         {
@@ -67,3 +64,5 @@ public:
         return Line(A1, B1);
     }
 };
+
+
