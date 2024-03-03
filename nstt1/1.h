@@ -154,9 +154,17 @@ void updateVal(TreeNode* node, int newValue, int oldValue) {
 }
 
 class AVL {
-    public:
     TreeNode * root;
 
+    void destroy_recursive(TreeNode* node) {
+        if (node) {
+            destroy_recursive(node->left);
+            destroy_recursive(node->right);
+            delete node;
+        }
+    }
+
+    public:
         AVL(int val) {
             this -> root = new TreeNode(val);
         }
@@ -174,5 +182,15 @@ class AVL {
     void _updateVal(int newVal, int OldVal) {
         updateVal(root, newVal, OldVal);
     }
+
+    TreeNode* get_root() {
+        return this->root;
+    }
+
+
+    ~AVL() {
+        destroy_recursive(this->root);
+    }
+    
 };
         
