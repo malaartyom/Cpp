@@ -3,7 +3,6 @@
 using namespace std;
 class Point
 {
-private:
     double x;
     double y;
 public:
@@ -21,7 +20,6 @@ public:
 
 class Line
 {
-private:
     double A;
     double B;
 public: 

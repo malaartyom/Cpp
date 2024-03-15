@@ -1,4 +1,5 @@
 #include <stdio.h>
+// Write TreeNode in AVL
 
 using namespace std;
 struct TreeNode {
@@ -8,13 +9,23 @@ struct TreeNode {
     TreeNode * right;
     int children;
     
-    TreeNode(int x){ // initializer list
+    TreeNode(int x) {
         this -> val = x;
-        this -> left = nullptr;
-        this -> right = nullptr;
+        this -> left = NULL;
+        this -> right = NULL;
+        this -> children = 0;
+        this -> h = 0;
     }
 
-    TreeNode(const TreeNode& other): val(other.val), left(other.left), right(other.right) {} 
+    TreeNode(const TreeNode& other) = default;
+
+    TreeNode(int x, TreeNode* left, TreeNode* right, int children, int height) {
+        this -> val = x;
+        this -> left =left;
+        this -> right = right;
+        this -> children = children;
+        this -> h = height;
+    }
 };
 
 int height(TreeNode * node) {
@@ -166,8 +177,33 @@ class AVL {
         }
     }
 
+    TreeNode* copy_nodes(TreeNode* t) {
+        if (t) {
+            TreeNode* left = copy_nodes(t->left);
+            TreeNode* right = copy_nodes(t->right);
+            return new TreeNode(t->val, left, right, t->children, t->h);
+        } else {
+            return nullptr;
+        }
+    }
+
     public:
+    AVL() {
+        AVL(0);
+    }
     AVL(int val): root(new TreeNode(val)) {}
+    AVL(const AVL& other) {
+        root = copy_nodes(other.root);
+
+    }
+    const AVL& operator=(const AVL& other) {
+        if (this != &other) {
+            destroy_recursive(this->root);
+            this->root = copy_nodes(other.root);
+        }
+        
+        return *this;
+    }
 
     void _insert(int val) {
         if ((!root) || (!root -> val)) {
@@ -191,7 +227,6 @@ class AVL {
 
     ~AVL() {
         destroy_recursive(this->root);
-        
     }
     
 };
