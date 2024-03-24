@@ -1,5 +1,7 @@
 #include <iostream>
 #include <stdio.h>
+#include <optional>
+// struct
 using namespace std;
 class Point
 {
@@ -41,10 +43,11 @@ public:
     double get_B() {
         return this->B;
     }
-
-    Point get_intersection(Line line) {
+    // std::optional
+    optional<Point> get_intersection(Line line) {
         if (this->A == line.get_A()) {
             cout << "Lines are paralell" << endl;
+            return {};
         } 
         else
         {
@@ -55,7 +58,7 @@ public:
             return Point((B1 - B0) / (A0 - A1), (A0 * B1 - A1 * B0) / (A0 - A1));
         }        
     }
-
+    // std::optinal if A == 0
     Line get_perpendicular_line(Point point) {
         double A1 = -1 / this->A;
         double B1 = point.get_y() - A1 * point.get_x();

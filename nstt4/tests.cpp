@@ -1,7 +1,6 @@
-#include "3.h"
+#include "4.hpp"
 #include <iostream>
 #include <cassert>
-
 void foo(AVL avl) {
     avl.get_root()->val = 159;
 }
@@ -73,12 +72,37 @@ public:
         std::cout << "testCopyOperator passed successfully!" << std::endl;
     }
 
+    void testMoveConstructor() {
+        AVL avl1(5);
+        avl1.insert(8);
+
+        AVL avl2(2);
+
+        AVL avl3 = avl1 + avl2;
+        assert(avl3.get_root()->left->val == 2);
+        
+
+    }
+
+    void testMoveOperator() {
+        AVL avl1(5);
+        avl1.insert(8);
+
+        AVL avl2(2);
+
+        AVL avl3; 
+        avl3 = avl1 + avl2;
+        assert(avl3.get_root()->left->val == 2);
+    }
+
     void runTests() {
         testInsertion();
         testRemoval();
         testUpdateVal();
         testCopyConstructor_1();
         testCopyConstructor_2();
+        testMoveConstructor();
+        testMoveOperator();
 
         std::cout << "All AVL tests passed successfully!" << std::endl;
     }

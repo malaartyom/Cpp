@@ -1,4 +1,5 @@
 #include <stdio.h>
+// Write TreeNode in AVL
 
 using namespace std;
 class AVL {
@@ -8,18 +9,20 @@ class AVL {
         TreeNode * left;
         TreeNode * right;
         int children;
-    
-        TreeNode(int x): val(x), left(nullptr), right(nullptr){ // initializer list FIXED
-        }
+        
+        TreeNode(int x): val(x), left(nullptr), right(nullptr), children(0), h(0) {}
 
-        TreeNode(const TreeNode& other): val(other.val), left(other.left), right(other.right) {}
+        TreeNode(const TreeNode& other) = default;
+
+        TreeNode(int x, TreeNode* left, TreeNode* right, int children, int height): val(x), left(left), 
+                                                                                    right(right), children(children), h(height){}
         int height(TreeNode * node) {
             if (node) {
                 return node -> h;
             } else {
                 return 0;
             }
-        }   
+        }
 
         int balanceFactor(TreeNode * node) {
             return height(node -> right) - height(node -> left);
@@ -81,15 +84,15 @@ class AVL {
             }
             return node;
         }
-        TreeNode * insert(TreeNode * node, int value) {
+        TreeNode * _insert(TreeNode * node, int value) {
             if (!node) {
                 return new TreeNode(value);
             }
             if (value < node -> val) {
-                node -> left = insert(node -> left, value);
+                node -> left = _insert(node -> left, value);
                 node -> left -> children++;
             } else {
-                node -> right = insert(node -> right, value);
+                node -> right = _insert(node -> right, value);
                 node -> right -> children++;
             }
             return balance(node);
@@ -138,19 +141,18 @@ class AVL {
             return balance(node);
         }
 
-        void updateVal(TreeNode* node, int newValue, int oldValue) {
+        void _updateVal(TreeNode* node, int newValue, int oldValue) {
             if (!node) {
                 return;
             }
             if (oldValue < node->val) {
-                updateVal(node->left, newValue, oldValue);
+                _updateVal(node->left, newValue, oldValue);
             } else if (oldValue > node->val) {
-                updateVal(node->right, newValue, oldValue);
+                _updateVal(node->right, newValue, oldValue);
             } else {
                 node->val = newValue;
             }
-        } 
-
+        }
     };
 
     void destroy_recursive(TreeNode* node) {
@@ -161,23 +163,71 @@ class AVL {
         }
     }
 
+    TreeNode* copy_nodes(TreeNode* t) {
+        if (t) {
+            TreeNode* left = copy_nodes(t->left);
+            TreeNode* right = copy_nodes(t->right);
+            return new TreeNode(t->val, left, right, t->children, t->h);
+        } else {
+            return nullptr;
+        }
+    }
+    void insert_nodes(TreeNode* other) {
+        if (other) {
+            insert_nodes(other->left);
+            insert_nodes(other->right);
+            this->insert(other->val);
+        }
+    }
     TreeNode * root;
     public:
+    AVL() {
+        AVL(0);
+    }
     AVL(int val): root(new TreeNode(val)) {}
+    AVL(const AVL& other) {
+        root = copy_nodes(other.root);
 
-    void _insert(int val) {
+    }
+    AVL(AVL&& other) {
+        root = other.root;
+        other.root = nullptr;
+    }
+    const AVL& operator=(const AVL& other) {
+        if (this != &other) {
+            destroy_recursive(this->root);
+            this->root = copy_nodes(other.root);
+        }
+        
+        return *this;
+    }
+    AVL& operator=(AVL&& other) {
+        if (this != &other) {
+            delete root;
+
+            root = other.root;
+            other.root = nullptr;
+        }
+        return *this;
+    }
+    AVL operator+(const AVL& other) {
+        AVL result = *this;
+        result.insert_nodes(other.root);
+        return result;
+    }
+    void insert(int val) {
         if ((!root) || (!root -> val)) {
             this -> root = new TreeNode(val);
         } else {
-            TreeNode * newRoot = root->insert(root, val);
+            TreeNode * newRoot = root->_insert(root, val);
             this -> root = newRoot;
         }
     }
-    void _remove(int val) {
+    void remove(int val) {
         TreeNode* newRoot = root->_remove(root, val);
     }
-    void _updateVal(int newVal, int OldVal) {
-        root->updateVal(root, newVal, OldVal);
+    void updateVal(int newVal, int OldVal) {
+        root->_updateVal(root, newVal, OldVal);
     }
 
     TreeNode* get_root() {
@@ -187,7 +237,6 @@ class AVL {
 
     ~AVL() {
         destroy_recursive(this->root);
-        
     }
     
 };

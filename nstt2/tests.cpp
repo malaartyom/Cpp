@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cassert>
-#include "2.h"
+#include "2.hpp"
 
 void testProgram() {
     Point p1(2.0, 3.0);
@@ -14,7 +14,7 @@ void testProgram() {
     assert(line.get_B() == 0.0);
 
     
-    Point intersectionPoint = line.get_intersection(Line(Point(3.0, 1.0), Point(1.5, 2.5)));
+    optional<Point> intersectionPoint = line.get_intersection(Line(Point(3.0, 1.0), Point(1.5, 2.5)));
     assert(intersectionPoint.get_x() == 2.0);
     assert(intersectionPoint.get_y() == 2.0);
 
