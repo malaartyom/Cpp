@@ -9,9 +9,14 @@ class Add : public Binary {
         return new Add(new_left, new_right);
    }
     void print() {
+        std::cout << "(";
         left->print();
-        std::cout << "+";
+        std::cout << " + ";
         right->print();
+        std::cout << ")";
+    }
+    Expression* copy() {
+        return new Add(left->copy(), right->copy());
     }
 };
 
@@ -19,14 +24,19 @@ class Sub : public Binary {
     public:
     Sub(Expression* left, Expression* right): Binary(left, right) {}
     Expression* diff(std::string var) {
-        Expression* left= this->left->diff(var);
-        Expression* right = this->right->diff(var);
-        return new Sub(left, right);
+        Expression* new_left= left->diff(var);
+        Expression* new_right = right->diff(var);
+        return new Sub(new_left, new_right);
    }
     void print() {
+        std::cout << "(";
         left->print();
-        std::cout << "-";
+        std::cout << " - ";
         right->print();
+        std::cout << ")";
+    }
+    Expression* copy() {
+        return new Sub(left->copy(), right->copy());
     }
 };
 
@@ -34,14 +44,20 @@ class Mult : public Binary {
     public:
     Mult(Expression* left, Expression* right): Binary(left, right) {}
     Expression* diff(std::string var) {
-        Expression* left= this->left->diff(var);
-        Expression* right = this->right->diff(var);
-        return new Add(new Mult(left, this->right),new Mult(this->left, right));
+        Expression* new_left= left->diff(var);
+        Expression* new_right = right->diff(var);
+        return new Add(new Mult(new_left, right->copy()),new Mult(left->copy(), new_right));
    }
     void print() {
+        std::cout << "(";
         left->print();
-        std::cout << "*";
+        std::cout <<  " * ";
         right->print();
+        std::cout << ")";
+    }
+
+    Expression* copy() {
+        return new Mult(left->copy(), right->copy());
     }
 };
 
@@ -49,14 +65,19 @@ class Div : public Binary {
     public:
     Div(Expression* left, Expression* right): Binary(left, right) {}
     Expression* diff(std::string var) {
-        Expression* left= this->left->diff(var);
-        Expression* right = this->right->diff(var);
-        return new Div(new Sub(new Mult(left, this->right), new Mult(this->left, right)), new Mult(this->right, this->right));
+        Expression* new_left= this->left->diff(var);
+        Expression* new_right = this->right->diff(var);
+        return new Div(new Sub(new Mult(new_left, right->copy()), new Mult(left->copy(), new_right)), new Mult(right->copy(), right->copy()));
    }
     void print() {
+        std::cout << "(";
         left->print();
-        std::cout << "/";
+        std::cout << " / ";
         right->print();
+        std::cout << ")";
+    }
+    Expression* copy() {
+        return new Div(left->copy(), right->copy());
     }
 };
 class Val : public Expression {
@@ -69,6 +90,9 @@ class Val : public Expression {
     void print() {
         std::cout << num;
     }
+    Expression* copy() {
+        return new Val(num);
+    }
 
     ~Val() {}
 };
@@ -80,11 +104,13 @@ class Var : public Expression {
         if (name == var) {
             return new Val(1);
         }
-        return this;
+        return new Val(0);
     }
     void print() {
         std::cout << name;
     }
-
+    Expression* copy() {
+        return new Var(name);
+    }
     ~Var() {}
 };

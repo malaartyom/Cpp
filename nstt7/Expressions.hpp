@@ -5,6 +5,7 @@ public:
     virtual Expression* diff(std::string var) = 0;
     virtual ~Expression() {};
     virtual void print() = 0;
+    virtual Expression* copy() = 0;
 };
 
 class Unary :public Expression {
@@ -32,5 +33,6 @@ public:
         delete left;
         delete right;
     }
+
     virtual Expression* diff(std::string var) = 0;
 };

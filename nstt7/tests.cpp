@@ -3,20 +3,16 @@
 #include <cassert>
 
 int main() {
-    // Creating expressions for testing
     Expression* var1 = new Var("x");
     Expression* var2 = new Var("y");
     Expression* val5 = new Val(5);
     Expression* val3 = new Val(3);
 
-    // Test differentiation of variables
     Expression* diffVarX = var1->diff("x");
     Expression* diffVarY = var2->diff("y");
 
-    // Test differentiation of values
     Expression* diffVal5X = val5->diff("x");
 
-    // Test differentiation of basic operations
     Expression* addExpr = new Add(new Var("x"), new Val(5));
     Expression* diffAddExpr = addExpr->diff("x");
 
@@ -28,6 +24,7 @@ int main() {
 
     Expression* divExpr = new Div(new Var("x"), new Val(3));
     Expression* diffDivExpr = divExpr->diff("x");
+    Expression* diffDivExprY = divExpr->diff("y");
 
     // Output the results
     std::cout << "Differentiation of Var 'x': ";
@@ -58,7 +55,10 @@ int main() {
     diffDivExpr->print();
     std::cout << std::endl;
 
-    // Clean up memory
+    std::cout << "Differentiation of 'x / 3' by y: ";
+    diffDivExprY->print();
+    std::cout << std::endl;
+
     delete var1;
     delete var2;
     delete val5;
@@ -74,6 +74,7 @@ int main() {
     delete diffSubExpr;
     delete divExpr;
     delete diffDivExpr;
+    delete diffDivExprY;
 
     return 0;
 }
