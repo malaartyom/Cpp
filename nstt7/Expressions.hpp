@@ -34,5 +34,18 @@ public:
         delete right;
     }
 
+    void print() {
+        std::cout << "(";
+        left->print();
+        std::cout << this->get_sign();
+        right->print();
+        std::cout << ")";
+    }
+
+    virtual char get_sign() = 0;
+
+
     virtual Expression* diff(std::string var) = 0;
 };
+
+// Implement get sign DONE

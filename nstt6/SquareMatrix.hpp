@@ -72,6 +72,8 @@ public:
 
     friend SquareMatrix operator* (const int left, const SquareMatrix& right);
 
+    friend SquareMatrix operator* (const SquareMatrix& left, const int right);
+
     friend SquareMatrix& operator*= (int left, SquareMatrix& right);
 
     friend bool operator==(SquareMatrix& left, SquareMatrix& right);
@@ -85,6 +87,7 @@ public:
         double& operator[] (size_t i) {
             return row[i];
         }
+        // Throw an exception
     };
 
     Row operator[] (size_t i) {
@@ -171,6 +174,10 @@ SquareMatrix operator* (const int left, const SquareMatrix& right) {
         result->data[i] = left * right.data[i];
     }
     return *result;
+}
+
+SquareMatrix operator* (const SquareMatrix& left, const int right) {
+    return right * left;
 }
 
 SquareMatrix& operator*= (int left, SquareMatrix& right){

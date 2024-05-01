@@ -1,5 +1,3 @@
-#include <istream>
-
 #include <iostream>
 
 template<typename T>

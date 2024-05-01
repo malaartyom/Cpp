@@ -8,15 +8,11 @@ class Add : public Binary {
         Expression* new_right = right->diff(var);
         return new Add(new_left, new_right);
    }
-    void print() {
-        std::cout << "(";
-        left->print();
-        std::cout << " + ";
-        right->print();
-        std::cout << ")";
-    }
     Expression* copy() {
         return new Add(left->copy(), right->copy());
+    }
+    char get_sign() {
+        return '+';
     }
 };
 
@@ -28,15 +24,11 @@ class Sub : public Binary {
         Expression* new_right = right->diff(var);
         return new Sub(new_left, new_right);
    }
-    void print() {
-        std::cout << "(";
-        left->print();
-        std::cout << " - ";
-        right->print();
-        std::cout << ")";
-    }
     Expression* copy() {
         return new Sub(left->copy(), right->copy());
+    }
+    char get_sign() {
+        return '-';
     }
 };
 
@@ -48,16 +40,13 @@ class Mult : public Binary {
         Expression* new_right = right->diff(var);
         return new Add(new Mult(new_left, right->copy()),new Mult(left->copy(), new_right));
    }
-    void print() {
-        std::cout << "(";
-        left->print();
-        std::cout <<  " * ";
-        right->print();
-        std::cout << ")";
-    }
 
     Expression* copy() {
         return new Mult(left->copy(), right->copy());
+    }
+
+    char get_sign() {
+        return '*';
     }
 };
 
@@ -78,6 +67,10 @@ class Div : public Binary {
     }
     Expression* copy() {
         return new Div(left->copy(), right->copy());
+    }
+
+    char get_sign() {
+        return '/';
     }
 };
 class Val : public Expression {
