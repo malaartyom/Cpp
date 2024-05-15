@@ -203,7 +203,6 @@ class AVL {
     }
     AVL& operator=(AVL&& other) {
         if (this != &other) {
-            delete root;
 
             root = other.root;
             other.root = nullptr;

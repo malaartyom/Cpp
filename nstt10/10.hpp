@@ -1,17 +1,23 @@
-template <typename T, int K>
+#include <iostream>
 
+template <typename T, int K>
 struct Counter {
-    static const int objects_created = 0;
-    static const int objects_alive = 0;
+    static int objects;
 
     Counter() {
-        if (objects_alive > K) {
-            throw  "Cannot create an object";
+        if (objects > K) {
+            throw std::runtime_error("\033[1;31mCannot create an object!!!\033[0m");
         }
-        ++objects_created;
-        ++objects_alive;
+        ++objects;
     }
     ~Counter() {
-        --objects_alive;
+        --objects;
     }
 };
+
+template<typename T, int K>
+int Counter<T , K>::objects = 0;
+
+
+
+

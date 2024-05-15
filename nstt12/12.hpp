@@ -9,14 +9,15 @@ class AVL {
         int h;
         TreeNode<U> * left;
         TreeNode<U> * right;
+        TreeNode<U> * parent;
         int children;
         
-        TreeNode(U x): val(x), left(nullptr), right(nullptr), children(0), h(0) {}
+        TreeNode(U x): val(x), left(nullptr), right(nullptr), parent(nullptr), children(0), h(0) {}
 
         TreeNode(const TreeNode<U>& other) = default;
 
-        TreeNode(int x, TreeNode<U>* left, TreeNode<U>* right, int children, int height): val(x), left(left), 
-                                                                                    right(right), children(children), h(height){}
+        TreeNode(int x, TreeNode<U>* left, TreeNode<U>* right, TreeNode<U>* parent, int children, int height): val(x), left(left), 
+                                                                                    right(right), children(children), parent(parent), h(height){}
         int height(TreeNode<U> * node) {
             if (node) {
                 return node -> h;
@@ -45,10 +46,17 @@ class AVL {
             node -> left = newRoot -> right;
             if (node -> left) {
                 node -> left -> children = newRoot -> children;
+                node->left->parent = node;
+
             }
             newRoot -> right = node;
+            newRoot->parent = node->parent;
+            node->parent = newRoot;
+
             if (newRoot -> right) {
                 newRoot -> right -> children = node -> children;
+                newRoot->right->parent = newRoot;
+
             }
             fixHeight(node);
             fixHeight(newRoot);
@@ -59,10 +67,16 @@ class AVL {
             TreeNode<U> * newRoot = node -> left;
             if (node -> right) {
                 node -> right -> children = newRoot -> children;
+                node->right->parent = node;
+
             }
+            newRoot->parent = node->parent;
+            node->parent = newRoot;
             newRoot -> left = node;
             if (newRoot -> left) {
                 newRoot -> left -> children = node -> children;
+                newRoot->left->parent = newRoot;
+
             }
             fixHeight(node);
             fixHeight(newRoot);
@@ -155,6 +169,43 @@ class AVL {
             }
         }
     };
+    template<typename V>
+    struct iterator{
+        TreeNode<V> * node;
+        iterator(TreeNode<V>* node) : node(node) {};
+        bool operator==(const iterator<V>& other) {
+            return node == other.node;
+        }
+        bool operator!=(const iterator<V>& other) {
+            return !(*this == other);
+        }
+        V operator*() {
+            return node->val;
+        }
+        iterator<V>& operator++() {
+            if (node->left) {
+                node = node->left;
+                while (node->right) {
+                    node = node->right;
+                }
+            } else if (node->right) {
+                node = node->right;
+            } else {
+                while (node->parent && node == node->parent->right) {
+                    node = node->parent;
+                }
+                node = node->parent;
+            }
+            return *this;
+        }
+        iterator operator++(int) noexcept {
+                iterator it = *this;
+                ++*this;
+                return it;
+        } 
+
+
+    };
 
     void destroy_recursive(TreeNode<T>* node) {
         if (node) {
@@ -168,7 +219,8 @@ class AVL {
         if (t) {
             TreeNode<T>* left = copy_nodes(t->left);
             TreeNode<T>* right = copy_nodes(t->right);
-            return new TreeNode<T>(t->val, left, right, t->children, t->h);
+            TreeNode<T>* parent = t->parent;
+            return new TreeNode<T>(t->val, left, right, parent, t->children, t->h);
         } else {
             return nullptr;
         }
@@ -194,6 +246,14 @@ class AVL {
         root = other.root;
         other.root = nullptr;
     }
+    iterator<T> begin() {
+        return iterator<T>(root);
+    }
+    
+    iterator<T> end() {
+        return iterator<T>(nullptr);
+    }
+
     const AVL<T>& operator=(const AVL& other) {
         if (this != &other) {
             destroy_recursive(this->root);

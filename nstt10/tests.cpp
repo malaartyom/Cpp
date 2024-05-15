@@ -1,9 +1,18 @@
 #include "10.hpp"
-class Foo: Counter<Foo, 3> {};
-class Bar: Counter<Bar, 2> {};
+#include <stdlib.h> 
+class Foo: Counter<Foo, 2> {
+    int x;
+    public:
+    Foo(int val): x(val) {}
+    Foo() {Foo(0);}
+    ~Foo() = default;
+};
 int main() {
-    Foo f1 = Foo();
-    Foo f2 = Foo();
-    Foo f3 = Foo();
-    Foo f4 = Foo();
+    try {
+        Foo f1 = Foo();
+        Foo f2 = Foo();
+        Foo f3 = Foo();
+    } catch (std::runtime_error& e) {
+        std::cout << e.what() << std::endl;
+    }
 }

@@ -9,3 +9,4 @@ else
   ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=lsan.supp ./a.out
   rm -rf a.out
 fi
+# brew link llvm@8
