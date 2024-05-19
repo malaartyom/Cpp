@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <utility>
 // Write TreeNode in AVL
 
 using namespace std;
@@ -203,9 +204,9 @@ class AVL {
     }
     AVL& operator=(AVL&& other) {
         if (this != &other) {
-
             root = other.root;
             other.root = nullptr;
+            // std::swap(root, other.root);
         }
         return *this;
     }

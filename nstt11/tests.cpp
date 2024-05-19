@@ -50,7 +50,7 @@ struct nth_prime<0> {
 int main() {
     std::cout << prime<6>::val << std::endl;
     std::cout << next_prime<2>::val << std::endl;
-    std::cout << nth_prime<200>::val << std::endl;
+    std::cout << nth_prime<5>::val << std::endl;
 
     return 0;
 }

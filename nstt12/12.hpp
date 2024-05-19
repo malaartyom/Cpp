@@ -44,19 +44,19 @@ class AVL {
         TreeNode<U> * rotate_right(TreeNode<U> * node) {
             TreeNode<U> * newRoot = node -> left;
             node -> left = newRoot -> right;
+            if (newRoot->right) {
+                newRoot -> right -> parent = node;
+            }
+
             if (node -> left) {
                 node -> left -> children = newRoot -> children;
-                node->left->parent = node;
 
             }
             newRoot -> right = node;
-            newRoot->parent = node->parent;
-            node->parent = newRoot;
-
+            newRoot -> parent =  node -> parent;
+            node -> parent = newRoot;
             if (newRoot -> right) {
                 newRoot -> right -> children = node -> children;
-                newRoot->right->parent = newRoot;
-
             }
             fixHeight(node);
             fixHeight(newRoot);
@@ -65,18 +65,18 @@ class AVL {
 
         TreeNode<U> * rotateLeft(TreeNode<U> * node) {
             TreeNode<U> * newRoot = node -> left;
+            if (newRoot->left) {
+                newRoot->left -> parent = node;
+            }
             if (node -> right) {
                 node -> right -> children = newRoot -> children;
-                node->right->parent = node;
 
             }
-            newRoot->parent = node->parent;
-            node->parent = newRoot;
             newRoot -> left = node;
+            newRoot -> parent = node -> parent;
+            node -> parent = newRoot;
             if (newRoot -> left) {
                 newRoot -> left -> children = node -> children;
-                newRoot->left->parent = newRoot;
-
             }
             fixHeight(node);
             fixHeight(newRoot);
@@ -183,22 +183,21 @@ class AVL {
             return node->val;
         }
         iterator<V>& operator++() {
-            if (node->left) {
-                node = node->left;
-                while (node->right) {
-                    node = node->right;
-                }
-            } else if (node->right) {
+            TreeNode<V>* p;
+            if (node->right != nullptr) {
                 node = node->right;
+                while (node->left != nullptr) node = node->left;
             } else {
-                while (node->parent && node == node->parent->right) {
-                    node = node->parent;
+                p = node->parent;
+                while (p != nullptr && node == p->right) {
+                    node = p;
+                    p = p->parent;
                 }
-                node = node->parent;
+                node = p;
             }
             return *this;
-        }
-        iterator operator++(int) noexcept {
+            } 
+        iterator operator++(int) {
                 iterator it = *this;
                 ++*this;
                 return it;

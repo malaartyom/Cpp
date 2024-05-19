@@ -115,7 +115,7 @@ public:
         assert(avl1.get_root()->right->right->val == "ddd");
         std::cout << "testAVLWithString passed successfully!" << std::endl;
     }
-
+    
     void testIterator() {
         AVL tree(5);
         tree.insert(3);

@@ -81,17 +81,25 @@ public:
     friend bool operator!=(SquareMatrix& left, SquareMatrix& right);
 
     class Row {
+        SquareMatrix& matrix;
         double * row;
     public:
-        Row(double * row): row(row) {}
+        Row(SquareMatrix& matrix, double * row): matrix(matrix), row(row) {}
         double& operator[] (size_t i) {
-            return row[i];
+            if (i >= 0 && i < matrix.size) {
+                return row[i];
+            } else {
+                throw std::out_of_range("Index out of range!");
+            }
         }
-        // Throw an exception
+        // Throw an exception DONE
     };
 
     Row operator[] (size_t i) {
-        return Row(data + i * size);
+        if (i >= 0 && i < size) return Row(*this, data + i * size);
+        else {
+            throw std::out_of_range("Index out of range!");
+        }
     }
  
     ~SquareMatrix() {

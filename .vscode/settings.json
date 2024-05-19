@@ -73,7 +73,23 @@
         "unordered_map": "cpp",
         "unordered_set": "cpp",
         "variant": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "charconv": "cpp",
+        "format": "cpp",
+        "numbers": "cpp",
+        "numeric": "cpp",
+        "queue": "cpp",
+        "random": "cpp",
+        "semaphore": "cpp",
+        "algorithm": "cpp",
+        "*.tcc": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "memory_resource": "cpp",
+        "utility": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

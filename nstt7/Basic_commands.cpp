@@ -58,13 +58,6 @@ class Div : public Binary {
         Expression* new_right = this->right->diff(var);
         return new Div(new Sub(new Mult(new_left, right->copy()), new Mult(left->copy(), new_right)), new Mult(right->copy(), right->copy()));
    }
-    void print() {
-        std::cout << "(";
-        left->print();
-        std::cout << " / ";
-        right->print();
-        std::cout << ")";
-    }
     Expression* copy() {
         return new Div(left->copy(), right->copy());
     }
