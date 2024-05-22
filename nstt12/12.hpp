@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include <iostream>
+#include <utility>
 
 using namespace std;
 template<typename T>
@@ -18,139 +19,111 @@ class AVL {
 
         TreeNode(int x, TreeNode<U>* left, TreeNode<U>* right, TreeNode<U>* parent, int children, int height): val(x), left(left), 
                                                                                     right(right), children(children), parent(parent), h(height){}
-        int height(TreeNode<U> * node) {
-            if (node) {
-                return node -> h;
-            } else {
-                return 0;
-            }
+        int height(TreeNode<U> *node) {
+            return node ? node->h : 0;
         }
 
-        int balanceFactor(TreeNode<U> * node) {
-            return height(node -> right) - height(node -> left);
+        int balanceFactor(TreeNode<U> *node) {
+            return height(node->right) - height(node->left);
         }
 
-        void fixHeight(TreeNode<U> * node) {
-            int hl = height(node -> left);
-            int hr = height(node -> right);
-            if (hl > hr) {
-                node -> h = hl + 1;
-
-            } else {
-                node -> h = hr + 1;
-            }
+        void fixHeight(TreeNode<U> *node) {
+            int hl = height(node->left);
+            int hr = height(node->right);
+            node->h = (hl > hr ? hl : hr) + 1;
         }
 
-        TreeNode<U> * rotate_right(TreeNode<U> * node) {
-            TreeNode<U> * newRoot = node -> left;
-            node -> left = newRoot -> right;
+        TreeNode<U> *rotateRight(TreeNode<U> *node) {
+            TreeNode<U> *newRoot = node->left;
+            node->left = newRoot->right;
             if (newRoot->right) {
-                newRoot -> right -> parent = node;
+                newRoot->right->parent = node;
             }
 
-            if (node -> left) {
-                node -> left -> children = newRoot -> children;
-
-            }
-            newRoot -> right = node;
-            newRoot -> parent =  node -> parent;
-            node -> parent = newRoot;
-            if (newRoot -> right) {
-                newRoot -> right -> children = node -> children;
-            }
+            newRoot->right = node;
+            newRoot->parent = node->parent;
+            node->parent = newRoot;
             fixHeight(node);
             fixHeight(newRoot);
             return newRoot;
         }
 
-        TreeNode<U> * rotateLeft(TreeNode<U> * node) {
-            TreeNode<U> * newRoot = node -> left;
+        TreeNode<U> *rotateLeft(TreeNode<U> *node) {
+            TreeNode<U> *newRoot = node->right;
+            node->right = newRoot->left;
             if (newRoot->left) {
-                newRoot->left -> parent = node;
+                newRoot->left->parent = node;
             }
-            if (node -> right) {
-                node -> right -> children = newRoot -> children;
 
-            }
-            newRoot -> left = node;
-            newRoot -> parent = node -> parent;
-            node -> parent = newRoot;
-            if (newRoot -> left) {
-                newRoot -> left -> children = node -> children;
-            }
+            newRoot->left = node;
+            newRoot->parent = node->parent;
+            node->parent = newRoot;
             fixHeight(node);
             fixHeight(newRoot);
             return newRoot;
         }
 
-        TreeNode<U> * balance(TreeNode<U> * node) {
+        TreeNode<U> *balance(TreeNode<U> *node) {
             fixHeight(node);
             if (balanceFactor(node) == 2) {
-                if (balanceFactor(node -> right) < 0) {
-                    node -> right = rotate_right(node -> right);
+                if (balanceFactor(node->right) < 0) {
+                    node->right = rotateRight(node->right);
                 }
                 return rotateLeft(node);
             }
             if (balanceFactor(node) == -2) {
-                if (balanceFactor(node -> left)) {
-                    node -> left = rotateLeft(node -> left);
+                if (balanceFactor(node->left) > 0) {
+                    node->left = rotateLeft(node->left);
                 }
-                return rotate_right(node);
+                return rotateRight(node);
             }
             return node;
         }
-        TreeNode<U> * _insert(TreeNode<U> * node, U value) {
+
+        TreeNode<U> *_insert(TreeNode<U> *node, U value) {
             if (!node) {
                 return new TreeNode(value);
             }
-            if (value < node -> val) {
-                node -> left = _insert(node -> left, value);
-                node -> left -> children++;
+            if (value < node->val) {
+                node->left = _insert(node->left, value);
+                node->left->parent = node;
             } else {
-                node -> right = _insert(node -> right, value);
-                node -> right -> children++;
+                node->right = _insert(node->right, value);
+                node->right->parent = node;
             }
-            return balance(node);
-        }
-        TreeNode<U> * findMin(TreeNode<U> * node) {
-            if (node -> left) {
-                return findMin(node -> left);
-            } else {
-                return node;
-            }
-        }
-        TreeNode<U> * removeMin(TreeNode<U> * node) {
-            if (!node -> left) {
-                return node -> right;
-            }
-            node -> left = removeMin(node -> left);
             return balance(node);
         }
 
-        TreeNode<U> * _remove(TreeNode<U> * node, U value) {
-            if (!node) {
-                return 0;
+        TreeNode<U> *findMin(TreeNode<U> *node) {
+            return node->left ? findMin(node->left) : node;
+        }
+
+        TreeNode<U> *removeMin(TreeNode<U> *node) {
+            if (!node->left) {
+                return node->right;
             }
-            if (value < node -> val) {
-                node -> left = _remove(node -> left, value);
-                if (node -> left) {
-                    node -> left -> children--;
-                }
-            } else if (value > node -> val) {
-                node -> right = _remove(node -> right, value);
-                if (node -> right) {
-                    node -> right -> children--;
-                }
+            node->left = removeMin(node->left);
+            return balance(node);
+        }
+
+        TreeNode<U> *_remove(TreeNode<U> *node, U value) {
+            if (!node) {
+                return nullptr;
+            }
+            if (value < node->val) {
+                node->left = _remove(node->left, value);
+            } else if (value > node->val) {
+                node->right = _remove(node->right, value);
             } else {
-                TreeNode<U> * left = node -> left;
-                TreeNode<U> * right = node -> right;
+                TreeNode<U> *left = node->left;
+                TreeNode<U> *right = node->right;
                 delete node;
                 if (!right) {
                     return left;
                 }
-                TreeNode<U> * min = findMin(right);
-                min -> right = removeMin(right);
-                min -> left = left;
+                TreeNode<U> *min = findMin(right);
+                min->right = removeMin(right);
+                min->left = left;
                 return balance(min);
             }
             return balance(node);
@@ -169,41 +142,47 @@ class AVL {
             }
         }
     };
+
     template<typename V>
-    struct iterator{
-        TreeNode<V> * node;
-        iterator(TreeNode<V>* node) : node(node) {};
-        bool operator==(const iterator<V>& other) {
+    struct iterator {
+        TreeNode<V> *node;
+
+        iterator(TreeNode<V>* node) : node(node) {}
+
+        bool operator==(const iterator<V>& other) const {
             return node == other.node;
         }
-        bool operator!=(const iterator<V>& other) {
+
+        bool operator!=(const iterator<V>& other) const {
             return !(*this == other);
         }
-        V operator*() {
+
+        V& operator*() const {
             return node->val;
         }
+
         iterator<V>& operator++() {
-            TreeNode<V>* p;
-            if (node->right != nullptr) {
+            if (node->right) {
                 node = node->right;
-                while (node->left != nullptr) node = node->left;
+                while (node->left) {
+                    node = node->left;
+                }
             } else {
-                p = node->parent;
-                while (p != nullptr && node == p->right) {
+                TreeNode<V>* p = node->parent;
+                while (p && node == p->right) {
                     node = p;
                     p = p->parent;
                 }
                 node = p;
             }
             return *this;
-            } 
+        }
+
         iterator operator++(int) {
-                iterator it = *this;
-                ++*this;
-                return it;
-        } 
-
-
+            iterator temp = *this;
+            ++(*this);
+            return temp;
+        }
     };
 
     void destroy_recursive(TreeNode<T>* node) {
@@ -218,37 +197,45 @@ class AVL {
         if (t) {
             TreeNode<T>* left = copy_nodes(t->left);
             TreeNode<T>* right = copy_nodes(t->right);
-            TreeNode<T>* parent = t->parent;
-            return new TreeNode<T>(t->val, left, right, parent, t->children, t->h);
-        } else {
-            return nullptr;
+            TreeNode<T>* new_node = new TreeNode<T>(t->val, left, right, nullptr, t->children, t->h);
+            if (left) left->parent = new_node;
+            if (right) right->parent = new_node;
+            return new_node;
         }
+        return nullptr;
     }
+
     void insert_nodes(TreeNode<T>* other) {
         if (other) {
             insert_nodes(other->left);
             insert_nodes(other->right);
-            this->insert(other->val);
+            insert(other->val);
         }
     }
-    TreeNode<T> * root;
-    public:
-    AVL() {
-        AVL<T>(0);
-    }
-    AVL(T val): root(new TreeNode<T>(val)) {}
-    AVL(const AVL<T>& other) {
-        root = copy_nodes(other.root);
 
-    }
-    AVL(AVL<T>&& other) {
-        root = other.root;
+    TreeNode<T>* root;
+
+public:
+    AVL() : root(nullptr) {}
+
+    AVL(T val) : root(new TreeNode<T>(val)) {}
+
+    AVL(const AVL<T>& other) : root(copy_nodes(other.root)) {}
+
+    AVL(AVL<T>&& other) : root(other.root) {
         other.root = nullptr;
     }
+
     iterator<T> begin() {
-        return iterator<T>(root);
+        TreeNode<T>* min_node = root;
+        if (min_node) {
+            while (min_node->left) {
+                min_node = min_node->left;
+            }
+        }
+        return iterator<T>(min_node);
     }
-    
+
     iterator<T> end() {
         return iterator<T>(nullptr);
     }
@@ -258,46 +245,47 @@ class AVL {
             destroy_recursive(this->root);
             this->root = copy_nodes(other.root);
         }
-        
         return *this;
     }
+
     AVL<T>& operator=(AVL&& other) {
         if (this != &other) {
-            // delete root;
-
+            destroy_recursive(this->root);
             root = other.root;
             other.root = nullptr;
         }
         return *this;
     }
+
     AVL<T> operator+(const AVL& other) {
         AVL<T> result = *this;
         result.insert_nodes(other.root);
         return result;
     }
+
     void insert(T val) {
-        if ((!root)) {
-            this -> root = new TreeNode<T>(val);
+        if (!root) {
+            root = new TreeNode<T>(val);
         } else {
-            TreeNode<T> * newRoot = root->_insert(root, val);
-            this -> root = newRoot;
+            root = root->_insert(root, val);
         }
     }
+
     void remove(T val) {
-        TreeNode<T>* newRoot = root->_remove(root, val);
-    }
-    void updateVal(T newVal, T OldVal) {
-        root->_updateVal(root, newVal, OldVal);
-    }
-
-    TreeNode<T>* get_root() {
-        return this->root;
+        if (root) {
+            root = root->_remove(root, val);
+        }
     }
 
+    void updateVal(T newVal, T oldVal) {
+        root->_updateVal(root, newVal, oldVal);
+    }
+
+    TreeNode<T>* get_root() const {
+        return root;
+    }
 
     ~AVL() {
-        destroy_recursive(this->root);
+        destroy_recursive(root);
     }
-    
 };
-        
