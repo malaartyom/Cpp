@@ -87,11 +87,23 @@ void testBufferedStringReaderWriterString() {
 
 }
 
+void testBufferedFileReaderWriterString() {
+    std::string source = "nstt8/test_file.txt";
+    BufferedFileReaderWriter brw(source, 40);
+    brw.write_string(" Hi!");
+
+    std::string strValue = brw.read_string();
+    assert(strValue == "Hello, World! Hi!");
+    std::cout << "testBufferedFileReaderWriterString passed!" << std::endl;
+
+}
+
 int main() {
     testStringReaderWriter();
     testFileReaderWriterInt();
     testFileReaderWriterChar();
     testFileReaderWriterString();
     testBufferedStringReaderWriterString();
+    testBufferedFileReaderWriterString();
     return 0;
 }

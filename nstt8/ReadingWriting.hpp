@@ -185,7 +185,7 @@ public:
     void clear_file() {
         FILE *file = fopen(file_name.c_str(), "w");
         if (file == NULL) {
-            throw std::runtime_error("Ошибка при открытии файла\n");
+            throw std::runtime_error("Can't open the file!\n");
         }
         fclose(file);
 }
@@ -193,6 +193,10 @@ public:
 
 };
 
+// Buffered -> BReader ---> BRW
+// |                       ^
+// v                       |
+// BWriter ----------------
 class BufferedStringReaderWriter : public ReaderWriter {
 private:
     StringReaderWriter rw;
